@@ -1,0 +1,232 @@
+   // ========== USER MANAGEMENT ==========
+
+    private void manageUsers() {
+        while (true) {
+            System.out.println("\n----- USER MANAGEMENT -----");
+            System.out.println("1. View All Users");
+            System.out.println("2. Create New User");
+            System.out.println("3. Update User Role");
+            System.out.println("4. Delete User");
+            System.out.println("5. Back to Admin Menu");
+            System.out.print("Choice: ");
+
+            int ch = system.sc.nextInt();
+            system.sc.nextLine();
+
+            if (ch == 1)
+                viewAllUsers();
+            else if (ch == 2)
+                createUser();
+            else if (ch == 3)
+                updateUserRole();
+            else if (ch == 4)
+                deleteUser();
+            else
+                break;
+        }
+    }
+
+    // VIEW ALL USERS
+    private void viewAllUsers() {
+        System.out.println("\n--- All Users ---");
+        System.out.println("ID | Name | Role");
+        System.out.println("---------------------------");
+        for (User u : system.users) {
+            System.out.println(u.id + " | " + u.name + " | " + u.role);
+        }
+        System.out.println("---------------------------");
+        System.out.println("Total Users: " + system.users.size());
+    }
+
+    // CREATE NEW USER
+    private void createUser() {
+        System.out.println("\n--- Create New User ---");
+
+        // Get User ID with duplicate check
+        String userId = "";
+        boolean validId = false;
+        while (!validId) {
+            System.out.print("Enter User ID: ");
+            userId = system.sc.nextLine().trim();
+
+            if (userId.isEmpty()) {
+                System.out.println("User ID cannot be empty!");
+                continue;
+            }
+
+            // Check for duplicate ID
+            boolean duplicate = false;
+            for (User u : system.users) {
+                if (u.id.equalsIgnoreCase(userId)) {
+                    duplicate = true;
+                    break;
+                }
+            }
+
+            if (duplicate) {
+                System.out.println("User ID already exists! Please choose a different ID.");
+            } else {
+                validId = true;
+            }
+        }
+
+        // Get Password
+        String password = "";
+        while (password.isEmpty()) {
+            System.out.print("Enter Password: ");
+            password = system.sc.nextLine().trim();
+            if (password.isEmpty()) {
+                System.out.println("Password cannot be empty!");
+            }
+        }
+
+        // Get Name
+        String name = "";
+        while (name.isEmpty()) {
+            System.out.print("Enter Full Name: ");
+            name = system.sc.nextLine().trim();
+            if (name.isEmpty()) {
+                System.out.println("Name cannot be empty!");
+            }
+        }
+
+        // Get Role with validation
+        String role = "";
+        boolean validRole = false;
+        while (!validRole) {
+            System.out.println("\nSelect Role:");
+            System.out.println("1. User");
+            System.out.println("2. Agent");
+            System.out.println("3. Admin");
+            System.out.print("Enter choice (1/2/3): ");
+
+            int roleChoice = system.sc.nextInt();
+            system.sc.nextLine();
+
+            if (roleChoice == 1) {
+                role = "user";
+                validRole = true;
+            } else if (roleChoice == 2) {
+                role = "agent";
+                validRole = true;
+            } else if (roleChoice == 3) {
+                role = "admin";
+                validRole = true;
+            } else {
+                System.out.println("Invalid choice! Please enter 1, 2, or 3.");
+            }
+        }
+
+        // Create and add user
+        User newUser = new User(userId, password, name, role);
+        system.users.add(newUser);
+
+        System.out.println("\n✓ User created successfully!");
+        System.out.println("ID: " + userId + " | Name: " + name + " | Role: " + role);
+    }
+
+    // UPDATE USER ROLE
+    private void updateUserRole() {
+        System.out.println("\n--- Update User Role ---");
+
+        // Show current users
+        viewAllUsers();
+
+        // Get user ID with validation
+        User targetUser = null;
+        while (targetUser == null) {
+            System.out.print("\nEnter User ID to update: ");
+            String userId = system.sc.nextLine().trim();
+
+            for (User u : system.users) {
+                if (u.id.equalsIgnoreCase(userId)) {
+                    targetUser = u;
+                    break;
+                }
+            }
+
+            if (targetUser == null) {
+                System.out.println("User not found! Please enter a valid User ID.");
+            }
+        }
+
+        System.out.println("\nCurrent Role: " + targetUser.role);
+
+        // Get new role with validation
+        String newRole = "";
+        boolean validRole = false;
+        while (!validRole) {
+            System.out.println("\nSelect New Role:");
+            System.out.println("1. User");
+            System.out.println("2. Agent");
+            System.out.println("3. Admin");
+            System.out.print("Enter choice (1/2/3): ");
+
+            int roleChoice = system.sc.nextInt();
+            system.sc.nextLine();
+
+            if (roleChoice == 1) {
+                newRole = "user";
+                validRole = true;
+            } else if (roleChoice == 2) {
+                newRole = "agent";
+                validRole = true;
+            } else if (roleChoice == 3) {
+                newRole = "admin";
+                validRole = true;
+            } else {
+                System.out.println("Invalid choice! Please enter 1, 2, or 3.");
+            }
+        }
+
+        String oldRole = targetUser.role;
+        targetUser.role = newRole;
+
+        System.out.println("\n✓ Role updated successfully!");
+        System.out.println(targetUser.name + ": " + oldRole + " → " + newRole);
+    }
+
+    // DELETE USER
+    private void deleteUser() {
+        System.out.println("\n--- Delete User ---");
+
+        // Show current users
+        viewAllUsers();
+
+        // Get user ID with validation
+        User targetUser = null;
+        while (targetUser == null) {
+            System.out.print("\nEnter User ID to delete: ");
+            String userId = system.sc.nextLine().trim();
+
+            for (User u : system.users) {
+                if (u.id.equalsIgnoreCase(userId)) {
+                    targetUser = u;
+                    break;
+                }
+            }
+
+            if (targetUser == null) {
+                System.out.println("User not found! Please enter a valid User ID.");
+            }
+        }
+
+        // Prevent deleting admin users (safety check)
+        if (targetUser.role.equals("admin")) {
+            System.out.println("\n✗ Cannot delete admin users for safety reasons!");
+            return;
+        }
+
+        // Confirm deletion
+        System.out.print("\nAre you sure you want to delete '" + targetUser.name + "' (" + targetUser.role + ")? (yes/no): ");
+        String confirm = system.sc.nextLine().trim().toLowerCase();
+
+        if (confirm.equals("yes") || confirm.equals("y")) {
+            system.users.remove(targetUser);
+            System.out.println("\n✓ User '" + targetUser.name + "' deleted successfully!");
+        } else {
+            System.out.println("\nDeletion cancelled.");
+        }
+    }
+
+}
