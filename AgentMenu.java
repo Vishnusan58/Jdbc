@@ -118,6 +118,7 @@ public class AgentMenu {
                     }
 
                     t.status = newStatus;
+                    system.database.updateTicket(t);
                     System.out.println("Ticket status updated successfully");
                     return;
                 }
@@ -179,6 +180,7 @@ public class AgentMenu {
 
             targetTicket.assignedTo = newAgent;
             targetTicket.addHistory(agent.id, "REASSIGNED", "Reassigned to " + newAgent);
+            system.database.updateTicket(targetTicket);
             System.out.println("Ticket reassigned successfully");
 
         } catch (InputMismatchException e) {
@@ -252,7 +254,9 @@ public class AgentMenu {
             for (Ticket t : system.tickets) {
                 if (t.id == id && agent.id.equals(t.assignedTo)) {
                     System.out.print("Note: ");
-                    t.notes.add(sc.nextLine());
+                    String note = sc.nextLine();
+                    t.notes.add(note);
+                    system.database.addNote(t.id, note);
                     System.out.println("Note added successfully");
                     return;
                 }

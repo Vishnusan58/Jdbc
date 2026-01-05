@@ -124,6 +124,7 @@ public class AdminMenu {
 
             targetTicket.assignedTo = agentId;
             targetTicket.status = "in-progress";
+            system.database.updateTicket(targetTicket);
             System.out.println("Escalated ticket assigned to agent: " + agentId);
 
         } catch (InputMismatchException e) {
@@ -212,6 +213,7 @@ public class AdminMenu {
 
                     if (choice == 1) {
                         cr.status = "approved";
+                        system.database.updateChangeRequest(cr);
                         System.out.println("Change request approved");
                     } else {
                         System.out.println("\nAvailable Agents:");
@@ -242,6 +244,7 @@ public class AdminMenu {
 
                         cr.assignedAgent = agentId;
                         cr.status = "sent-to-agent";
+                        system.database.updateChangeRequest(cr);
                         System.out.println("Sent to agent " + agentId + " for checking");
                     }
                     return;
