@@ -101,6 +101,7 @@ public class UserMenu {
             system.assignTicket(t);
             system.tickets.add(t);
             user.myTickets.add(t);
+            system.database.insertTicket(t);
 
             System.out.println("Ticket Created Successfully. Ticket ID: " + t.id);
 
@@ -119,6 +120,7 @@ public class UserMenu {
                 if (t.id == id && t.status != null && !t.status.equalsIgnoreCase("resolved")) {
                     System.out.print("New Description: ");
                     t.description = sc.nextLine();
+                    system.database.updateTicket(t);
                     System.out.println("Description updated successfully");
                     return;
                 }
@@ -174,6 +176,7 @@ public class UserMenu {
             for (Ticket t : user.myTickets) {
                 if (t.id == id && !t.escalated) {
                     t.escalated = true;
+                    system.database.updateTicket(t);
                     System.out.println("Ticket escalated to admin");
                     return;
                 }
@@ -233,6 +236,7 @@ public class UserMenu {
                     }
 
                     t.addHistory(user.id, "RATED", "Rating: " + rating);
+                    system.database.updateTicket(t);
                     return;
                 }
             }
@@ -305,8 +309,9 @@ public class UserMenu {
             int id = new java.util.Random().nextInt(900) + 100;
             ChangeRequest cr = new ChangeRequest(id, asset, change, user.id);
             system.changeRequests.add(cr);
+            system.database.insertChangeRequest(cr);
 
-            System.out.println("Change request raised successfully!");
+            System.out.println("Change request raised successfully!\nReference ID: " + id);
 
         } catch (Exception e) {
             System.out.println("Error while raising change request: " + e.getMessage());
