@@ -7,6 +7,19 @@
 
 > **Goal:** This document helps you **explain the flow, logic, and Java concepts** confidently during project review, even if questions come from any random part of the code.
 
+### SQLite setup (prevents the "No suitable driver" error)
+1. Download the SQLite JDBC driver JAR (e.g., [`sqlite-jdbc-3.46.1.3.jar`](https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.46.1.3/)).
+2. Compile with the driver on your classpath:
+   ```bash
+   javac -cp .:sqlite-jdbc-3.46.1.3.jar *.java
+   ```
+3. Run with the same classpath:
+   ```bash
+   java -cp .:sqlite-jdbc-3.46.1.3.jar Main
+   ```
+
+If the driver JAR is missing, SQLite connections fail with `No suitable driver found for jdbc:sqlite:tickets.db`. Adding the JAR resolves it.
+
 ---
 
 ## 📁 Project Structure

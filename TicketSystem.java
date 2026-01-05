@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -10,66 +9,22 @@ public class TicketSystem {
     public ArrayList<Ticket> tickets = new ArrayList<>();
     public ArrayList<ChangeRequest> changes = new ArrayList<>();
     public ArrayList<ChangeRequest> changeRequests = new ArrayList<>();
+    public final Database database;
 
     Scanner sc = new Scanner(System.in);
 
     public TicketSystem() {
 
+        database = new Database();
+        loadFromDatabase();
+    }
+
+    private void loadFromDatabase() {
         try {
-            // USERS WITH PASSWORD
-            User u1 = new User("U1", "123", "Manu", "user");
-            User u2 = new User("U2", "123", "Karthi", "user");
-            User a1 = new User("A1", "123", "Vishnu", "agent");
-            User a2 = new User("A2", "123", "Priya", "agent");
-            User ad1 = new User("AD1", "123", "Rishi", "admin");
-
-            users.add(u1);
-            users.add(u2);
-            users.add(a1);
-            users.add(a2);
-            users.add(ad1);
-
-            // EXISTING TICKETS
-            Ticket t1 = new Ticket("Email Issue", "Email not working", "IT", "Software", "U1");
-            t1.assignedTo = "A1";
-            t1.status = "in-progress";
-            t1.notes.add("Checking email server configuration - Vishnu");
-            tickets.add(t1);
-            u1.myTickets.add(t1);
-
-            Ticket t2 = new Ticket("Network Slow", "Internet is very slow", "IT", "Network", "U2");
-            t2.assignedTo = "A2";
-            t2.status = "open";
-            t2.notes.add("Will check network bandwidth - Priya");
-            tickets.add(t2);
-            u2.myTickets.add(t2);
-
-            Ticket t3 = new Ticket("Mouse Broken", "Left click not working", "Hardware", "Peripherals", "U1");
-            t3.assignedTo = "A1";
-            t3.status = "resolved";
-            t3.resolvedDate = new Date();
-            t3.rating = 4;
-            t3.notes.add("Replaced with new mouse - Vishnu");
-            tickets.add(t3);
-            u1.myTickets.add(t3);
-
-            Ticket t4 = new Ticket("Payroll Error", "Salary mismatch", "HR", "Payroll", "U2");
-            t4.assignedTo = "A2";
-            t4.status = "open";
-            t4.notes.add("Forwarded to HR team for verification - Priya");
-            tickets.add(t4);
-            u2.myTickets.add(t4);
-
-            Ticket t5 = new Ticket("VPN Access", "Need VPN access", "IT", "Network", "U1");
-            t5.assignedTo = "A1";
-            t5.status = "waiting";
-            t5.notes.add("Waiting for manager approval document - Vishnu");
-            tickets.add(t5);
-            u1.myTickets.add(t5);
-
-            ChangeRequest cr1 = new ChangeRequest(101, "laptop", "renew", "U1");
-            changeRequests.add(cr1);
-
+            this.users = database.loadUsers();
+            this.tickets = database.loadTickets();
+            this.changeRequests = database.loadChangeRequests();
+            database.syncUserTickets(this.users, this.tickets);
         } catch (Exception e) {
             System.out.println("Error while initializing system data: " + e.getMessage());
         }
